@@ -10,10 +10,10 @@ def create_short_url(request):
         form = ShortURLForm(request.POST)
         if form.is_valid():
             short_url = form.save()
-            return render(request, "create_success.html", {"short_url": short_url})
+            return render(request, "page/create_success.html", {"short_url": short_url})
     else:
         form = ShortURLForm()
-    return render(request, "create.html", {"form": form})
+    return render(request, "page/create.html", {"form": form})
 
 # 短網址跳轉
 @require_http_methods(['GET'])

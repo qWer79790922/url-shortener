@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}最Min捷快速-短網址產生器{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daisyui"></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="bg-white shadow-md p-4">
+      <div class="container mx-auto text-xl font-bold text-primary">
+        <a href="/">短網址產生器</a>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="container mx-auto flex-1 p-4">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-sm text-gray-500 py-4 border-t">
+      &copy; 2025 短網址平台 | 開發者 Min
+    </footer>
+  </body>
+</html>
