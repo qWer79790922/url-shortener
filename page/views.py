@@ -6,14 +6,21 @@ from .models import ShortURL
 # 建立短網址
 @require_http_methods(['GET', 'POST'])
 def create_short_url(request):
+    short_url = None
+
     if request.method == "POST":
         form = ShortURLForm(request.POST)
         if form.is_valid():
             short_url = form.save()
-            return render(request, "page/create_success.html", {"short_url": short_url})
+            form = ShortURLForm()
+
     else:
         form = ShortURLForm()
-    return render(request, "page/create.html", {"form": form})
+
+    return render(request, "page/create.html", {
+        "form": form,
+        "short_url": short_url
+    })
 
 # 短網址跳轉
 @require_http_methods(['GET'])

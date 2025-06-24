@@ -1,0 +1,28 @@
+{% extends "shared/layout.html" %} {% block content %}
+<h2 class="text-2xl font-bold mb-6">新增短網址</h2>
+
+<!-- 成功訊息 -->
+{% if short_url %}
+<div class="alert alert-success shadow-lg mb-6">
+  <span>
+    你的縮網址為：
+    <a
+      href="/{{ short_url.short_code }}"
+      class="link link-primary"
+      target="_blank"
+    >
+      {{ request.build_absolute_uri|add:short_url.short_code }}
+    </a>
+  </span>
+</div>
+{% endif %}
+
+<!-- 表單 -->
+<div>
+  <form method="POST" class="space-y-4">
+    {% csrf_token %} {{ form.as_p }}
+
+    <button class="btn btn-primary" type="submit">產生短網址</button>
+  </form>
+</div>
+{% endblock %}
