@@ -2,6 +2,7 @@ import string
 import random
 from urllib.parse import urlparse, parse_qs
 from django.db import models
+from django.contrib.auth.hashers import make_password
 
 def generate_unique_code(length=6):
     characters = string.ascii_letters + string.digits
@@ -26,6 +27,10 @@ class ShortURL(models.Model):
     utm_content = models.CharField("UTM 內容", max_length=100, blank=True)
 
     def save(self, *args, **kwargs):
+        # 密碼加密
+        if self.is_protected and self.password and not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+
         # 自動解析 utm 參數
         parsed_url = urlparse(self.original_url)
         query_params = parse_qs(parsed_url.query)

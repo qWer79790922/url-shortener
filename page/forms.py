@@ -29,3 +29,10 @@ class ShortURLForm(forms.ModelForm):
         if short_code and ShortURL.objects.filter(short_code=short_code).exists():
             raise forms.ValidationError("此短網址代碼已被使用，請重新輸入")
         return short_code
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        # 如果有輸入密碼，強制啟用密碼保護
+        cleaned_data["is_protected"] = bool(password)
+        return cleaned_data
