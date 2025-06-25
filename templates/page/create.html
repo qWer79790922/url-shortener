@@ -22,7 +22,64 @@
   <form method="POST" class="space-y-4">
     {% csrf_token %} {{ form.as_p }}
 
+    <!-- 取得頁面資訊按鈕 -->
+    <button
+      id="fetchBtn"
+      type="button"
+      class="btn btn-outline"
+      onclick="fetchPageInfo()"
+    >
+      <span id="fetchBtnText">
+        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> 取得頁面資訊
+      </span>
+      <span id="fetchBtnLoading" class="loading loading-spinner hidden"></span>
+    </button>
+
     <button class="btn btn-primary" type="submit">產生短網址</button>
   </form>
 </div>
+
+<!-- JS -->
+<script>
+  function fetchPageInfo() {
+    const urlInput = document.querySelector('input[name="original_url"]');
+    const descTextarea = document.querySelector('textarea[name="description"]');
+    const fetchBtn = document.getElementById("fetchBtn");
+    const fetchBtnText = document.getElementById("fetchBtnText");
+    const fetchBtnLoading = document.getElementById("fetchBtnLoading");
+
+    if (!urlInput.value) {
+      alert("請先輸入原始網址");
+      return;
+    }
+
+    // loading 狀態
+    fetchBtn.disabled = true;
+    fetchBtnText.classList.add("hidden");
+    fetchBtnLoading.classList.remove("hidden");
+
+    fetch(`/api/fetch-page-info/?url=${encodeURIComponent(urlInput.value)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const title = data.title || "";
+        const description = data.description || "";
+        const combined = [title, description].filter(Boolean).join(" - ");
+
+        if (combined && descTextarea) {
+          descTextarea.value = combined;
+        } else {
+          alert("無法取得網頁資訊，請確認網址是否正確");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("擷取失敗，請稍後再試");
+      })
+      .finally(() => {
+        fetchBtn.disabled = false;
+        fetchBtnText.classList.remove("hidden");
+        fetchBtnLoading.classList.add("hidden");
+      });
+  }
+</script>
 {% endblock %}
