@@ -1,45 +1,147 @@
 {% extends "shared/layout.html" %} {% block content %}
-<h2 class="text-2xl font-bold mb-6">新增短網址</h2>
+<h2 class="text-2xl font-bold mb-2 text-gray-800">新增短網址</h2>
+<h3 class="text-lg font-medium mb-6 text-gray-600">
+  最
+  <span class="font-bold text-primary">Min</span>
+  捷的短網址工具，省字也省事，輕鬆搞定連結分享！
+</h3>
 
-<!-- 成功訊息 -->
+<form method="POST" class="space-y-6">
+  {% csrf_token %}
+
+  <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-4">
+    <!-- 原始網址 -->
+    <div class="form-control w-full">
+      <label
+        for="{{ form.original_url.id_for_label }}"
+        class="label-text text-gray-700 font-medium mb-1 block"
+      >
+        連結
+      </label>
+      <input
+        type="url"
+        name="{{ form.original_url.name }}"
+        id="{{ form.original_url.id_for_label }}"
+        value="{{ form.original_url.value|default_if_none:'' }}"
+        placeholder="請輸入或貼上完整的網址"
+        class="input input-bordered w-full"
+        required
+      />
+      {% if form.original_url.help_text %}
+      <p class="text-sm text-gray-500 mt-1">
+        {{ form.original_url.help_text }}
+      </p>
+      {% endif %} {% if form.original_url.errors %}
+      <p class="text-red-500 text-sm mt-1">{{ form.original_url.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <!-- 短網址顯示用欄位 -->
+    <div class="form-control w-full">
+      <label
+        for="short_code_display"
+        class="label-text text-gray-700 font-medium mb-1 block"
+        >短網址</label
+      >
+      <input
+        type="text"
+        id="short_code_display"
+        class="input input-bordered w-full"
+        placeholder="可自行填寫，或是留空自動產生"
+        oninput="document.getElementById('id_short_code').value = this.value || ''"
+      />
+      <p class="text-sm text-gray-500 mt-1">可自行填寫，或是自動產生</p>
+    </div>
+    {{ form.short_code }}
+
+    <!-- 密碼 -->
+    <div x-data="{ show: false }" class="form-control w-full">
+      <label class="label-text text-gray-700 font-medium mb-1 block"
+        >{{ form.password.label }}</label
+      >
+      <div class="relative">
+        <input
+          :type="show ? 'text' : 'password'"
+          name="{{ form.password.name }}"
+          class="input input-bordered w-full pr-20"
+          placeholder="{{ form.password.field.widget.attrs.placeholder }}"
+          value="{{ form.password.value|default_if_none:'' }}"
+        />
+        <button
+          type="button"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+          @click="show = !show"
+        >
+          <span x-text="show ? '隱藏' : '顯示'"></span>
+        </button>
+      </div>
+      {% if form.password.help_text %}
+      <p class="text-sm text-gray-500 mt-1">{{ form.password.help_text }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 備註 -->
+  <div class="form-control">
+    <div class="flex items-center gap-2 mb-2">
+      <label class="label-text text-base font-medium text-gray-700">
+        {{ form.description.label }}
+      </label>
+      <button
+        id="fetchBtn"
+        type="button"
+        class="btn btn-sm btn-neutral"
+        onclick="fetchPageInfo()"
+      >
+        <span id="fetchBtnText">
+          <i class="fa-solid fa-cloud-arrow-down"></i>
+          取得頁面資訊
+        </span>
+        <span
+          id="fetchBtnLoading"
+          class="loading loading-spinner hidden"
+        ></span>
+      </button>
+    </div>
+    <textarea
+      name="{{ form.description.name }}"
+      rows="3"
+      class="textarea textarea-bordered w-full"
+      placeholder="{{ form.description.field.widget.attrs.placeholder }}"
+    >
+{{ form.description.value|default_if_none:'' }}</textarea
+    >
+  </div>
+
+  {{ form.is_protected.as_hidden }}
+
+  <div class="flex justify-center">
+    <button class="btn btn-primary" type="submit">產生短網址</button>
+  </div>
+</form>
+
 {% if short_url %}
-<div class="alert alert-success shadow-lg mb-6">
-  <span>
-    你的縮網址為：
+<div class="bg-white rounded-lg shadow p-4 mb-6 text-gray-800 mt-6">
+  <span>你的縮網址為：</span>
+  <span class="inline-flex items-center gap-2">
     <a
       href="/{{ short_url.short_code }}"
-      class="link link-primary"
+      class="link link-primary break-all"
       target="_blank"
     >
       {{ request.build_absolute_uri|add:short_url.short_code }}
     </a>
+    <button
+      class="p-1 hover:bg-gray-100 rounded-full cursor-pointer flex items-center gap-1 text-gray-500"
+      onclick="copyToClipboard('{{ request.build_absolute_uri|add:short_url.short_code }}')"
+      title="複製連結"
+    >
+      <span class="hidden sm:inline">複製連結</span>
+      <i class="fa-regular fa-copy fa-lg"></i>
+    </button>
   </span>
 </div>
 {% endif %}
-
-<!-- 表單 -->
-<div>
-  <form method="POST" class="space-y-4">
-    {% csrf_token %} {{ form.as_p }}
-
-    <!-- 取得頁面資訊按鈕 -->
-    <button
-      id="fetchBtn"
-      type="button"
-      class="btn btn-outline"
-      onclick="fetchPageInfo()"
-    >
-      <span id="fetchBtnText">
-        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> 取得頁面資訊
-      </span>
-      <span id="fetchBtnLoading" class="loading loading-spinner hidden"></span>
-    </button>
-
-    <button class="btn btn-primary" type="submit">產生短網址</button>
-  </form>
-</div>
-
-<!-- JS -->
 <script>
   function fetchPageInfo() {
     const urlInput = document.querySelector('input[name="original_url"]');
@@ -53,7 +155,6 @@
       return;
     }
 
-    // loading 狀態
     fetchBtn.disabled = true;
     fetchBtnText.classList.add("hidden");
     fetchBtnLoading.classList.remove("hidden");
@@ -79,6 +180,16 @@
         fetchBtn.disabled = false;
         fetchBtnText.classList.remove("hidden");
         fetchBtnLoading.classList.add("hidden");
+      });
+  }
+  function copyToClipboard(text) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        alert("已複製連結！");
+      })
+      .catch((err) => {
+        console.error("複製失敗：", err);
       });
   }
 </script>

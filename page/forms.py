@@ -10,7 +10,7 @@ class ShortURLForm(forms.ModelForm):
             'original_url': forms.URLInput(attrs={
                 'placeholder': '請輸入或貼上完整的網址'
             }),
-            'short_code': forms.TextInput(),
+            'short_code': forms.HiddenInput(),
             'password': forms.PasswordInput(),
             'description': forms.Textarea(attrs={
                 'rows': 3
@@ -26,8 +26,10 @@ class ShortURLForm(forms.ModelForm):
 
     def clean_short_code(self):
         short_code = self.cleaned_data.get('short_code')
-        if short_code and ShortURL.objects.filter(short_code=short_code).exists():
-            raise forms.ValidationError("此短網址代碼已被使用，請重新輸入")
+        if not short_code:
+            return None 
+        if ShortURL.objects.filter(short_code=short_code).exists():
+            raise forms.ValidationError("此短網址已被使用")
         return short_code
 
     def clean(self):

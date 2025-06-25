@@ -27,6 +27,8 @@ class ShortURL(models.Model):
     utm_content = models.CharField("UTM 內容", max_length=100, blank=True)
 
     def save(self, *args, **kwargs):
+        if not self.short_code:
+            self.short_code = generate_unique_code()
         # 密碼加密
         if self.is_protected and self.password and not self.password.startswith('pbkdf2_'):
             self.password = make_password(self.password)

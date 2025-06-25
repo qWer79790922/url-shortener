@@ -2,7 +2,7 @@ import requests
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from .forms import ShortURLForm
-from .models import ShortURL
+from .models import ShortURL, generate_unique_code
 from django.contrib.auth.hashers import check_password
 from bs4 import BeautifulSoup
 from django.http import JsonResponse
@@ -16,9 +16,10 @@ def create_short_url(request):
     if request.method == "POST":
         form = ShortURLForm(request.POST)
         if form.is_valid():
+            if not form.cleaned_data.get('short_code'):
+                form.instance.short_code = generate_unique_code()
             short_url = form.save()
             form = ShortURLForm()
-
     else:
         form = ShortURLForm()
 
