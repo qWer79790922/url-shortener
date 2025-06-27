@@ -113,8 +113,11 @@
       class="textarea textarea-bordered w-full"
       placeholder="{{ form.description.field.widget.attrs.placeholder }}"
     >
-{{ form.description.value|default_if_none:'' }}</textarea
-    >
+    {{ form.description.value|default_if_none:'' }}
+    </textarea>
+    <p class="text-sm text-gray-500 mt-1">
+      部分網站會阻擋資料擷取，系統可能僅填入預設文字，請自行確認內容。
+    </p>
   </div>
 
   {{ form.is_protected.as_hidden }}
