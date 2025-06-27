@@ -150,6 +150,28 @@
 </div>
 {% endif %}
 <script>
+  // 提示框
+  function showToast(message, type = "success") {
+    const existing = document.querySelector(".custom-toast");
+    if (existing) existing.remove();
+
+    const toastContainer = document.createElement("div");
+    toastContainer.className = "custom-toast z-50";
+
+    toastContainer.innerHTML = `
+    <div class="alert alert-${type} shadow-lg">
+      <span>${message}</span>
+    </div>
+  `;
+
+    document.body.appendChild(toastContainer);
+
+    setTimeout(() => {
+      toastContainer.remove();
+    }, 3000);
+  }
+
+  // 取得網頁資訊
   function fetchPageInfo() {
     const urlInput = document.querySelector('input[name="original_url"]');
     const descTextarea = document.querySelector('textarea[name="description"]');
@@ -158,7 +180,7 @@
     const fetchBtnLoading = document.getElementById("fetchBtnLoading");
 
     if (!urlInput.value) {
-      alert("請先輸入原始網址");
+      showToast("請先輸入原始網址", "error");
       return;
     }
 
@@ -175,13 +197,13 @@
 
         if (combined && descTextarea) {
           descTextarea.value = combined;
+          showToast("已擷取網頁資訊", "success");
         } else {
-          alert("無法取得網頁資訊，請確認網址是否正確");
+          showToast("無法取得網頁資訊，請確認網址是否正確", "error");
         }
       })
-      .catch((err) => {
-        console.error(err);
-        alert("擷取失敗，請稍後再試");
+      .catch(() => {
+        showToast("擷取失敗，請稍後再試", "error");
       })
       .finally(() => {
         fetchBtn.disabled = false;
@@ -189,15 +211,29 @@
         fetchBtnLoading.classList.add("hidden");
       });
   }
+
+  // 複製短網址
   function copyToClipboard(text) {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        alert("已複製連結！");
+        showToast("已複製連結！", "success");
       })
-      .catch((err) => {
-        console.error("複製失敗：", err);
+      .catch(() => {
+        showToast("複製失敗，請手動複製", "error");
       });
   }
 </script>
+
+<style>
+  .custom-toast {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    z-index: 50;
+  }
+</style>
 {% endblock %}
