@@ -6,7 +6,11 @@
   捷的短網址工具，省字也省事，輕鬆搞定連結分享！
 </h3>
 
-<form method="POST" class="space-y-6">
+<form
+  method="POST"
+  class="space-y-6"
+  onsubmit="gtag('event', 'generate_short_url', { event_category: 'Shortener', event_label: 'Submit Form' });"
+>
   {% csrf_token %}
 
   <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-4">

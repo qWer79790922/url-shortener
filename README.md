@@ -19,7 +19,7 @@ https://min-url-shortener.onrender.com/MinQRCode
 - 可自動或手動產生短網址
 - 可設定密碼保護
 - 可自動擷取原始網址標題作為備註
-- 串接 Google Analytics 即時流量追蹤
+- 串接 Google Analytics：即時流量分析與產生短網址行為追蹤
 - Render 雲端部署，隨時可用
 
 ---
