@@ -12,7 +12,7 @@ def generate_unique_code(length=6):
             return code
 
 class ShortURL(models.Model):
-    original_url = models.URLField("原始網址")
+    original_url = models.URLField("原始網址", max_length=500)
     short_code = models.CharField("短網址代碼", max_length=100, unique=True, default=generate_unique_code)
     description = models.TextField("備註說明", blank=True)
     is_protected = models.BooleanField("是否啟用密碼保護", default=False)
