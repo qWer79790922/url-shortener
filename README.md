@@ -10,7 +10,6 @@
 <img src="https://min-url-shortener.onrender.com/MinQRCode" alt="Moordule-QRcode" width="400"/>
 
 專案網址 :[https://min-url-shortener.onrender.com](https://min-url-shortener.onrender.com)
-https://min-url-shortener.onrender.com/MinQRCode
 
 ---
 
